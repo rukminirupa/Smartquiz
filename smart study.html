@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Smart Study Quiz</title>
+
+<style>
+body{
+text-align:center;
+font-family:Arial;
+background:linear-gradient(to right,#fddb92,#d1fdff);
+}
+
+h1{
+margin-top:30px;
+}
+
+#question{
+font-size:24px;
+margin:20px;
+}
+
+button{
+display:block;
+margin:10px auto;
+padding:12px 25px;
+font-size:18px;
+border:none;
+border-radius:8px;
+background:teal;
+color:white;
+cursor:pointer;
+width:250px;
+}
+
+button:hover{
+background:darkcyan;
+}
+
+#score{
+font-size:20px;
+margin-top:15px;
+}
+
+#feedback{
+font-size:20px;
+margin-top:10px;
+}
+
+#timer{
+font-size:22px;
+color:red;
+margin-top:10px;
+}
+
+#progress{
+font-size:18px;
+margin-top:10px;
+}
+
+#restart{
+margin-top:20px;
+background:green;
+}
+</style>
+
+</head>
+
+<body>
+
+<h1>📚 Smart Study Quiz</h1>
+
+<div id="progress"></div>
+<div id="timer"></div>
+
+<div id="question"></div>
+
+<button onclick="check(0)" id="opt0"></button>
+<button onclick="check(1)" id="opt1"></button>
+<button onclick="check(2)" id="opt2"></button>
+<button onclick="check(3)" id="opt3"></button>
+
+<div id="feedback"></div>
+<div id="score">Score: 0</div>
+
+<button id="restart" onclick="startGame()">Play Again</button>
+
+<script>
+
+let questionBank=[
+{q:"Capital of India?",options:["Mumbai","Delhi","Chennai","Kolkata"],answer:1},
+{q:"5 + 3 = ?",options:["6","7","8","9"],answer:2},
+{q:"HTML stands for?",options:["Hyper Text Markup Language","High Text Machine Language","Home Tool Markup Language","Hyperlinks Text Mark"],answer:0},
+{q:"CPU stands for?",options:["Central Processing Unit","Control Program Unit","Computer Processing Unit","Central Print Unit"],answer:0},
+{q:"Largest planet?",options:["Earth","Mars","Jupiter","Saturn"],answer:2},
+{q:"2 × 6 = ?",options:["10","12","14","16"],answer:1},
+{q:"Which is a programming language?",options:["HTML","CSS","Python","HTTP"],answer:2},
+{q:"Water freezes at?",options:["0°C","50°C","100°C","10°C"],answer:0}
+];
+
+let selectedQuestions=[];
+let index=0;
+let score=0;
+let timeLeft=10;
+let timer;
+
+function startGame(){
+
+selectedQuestions=[];
+index=0;
+score=0;
+
+document.getElementById("score").innerHTML="Score: 0";
+document.getElementById("feedback").innerHTML="";
+
+while(selectedQuestions.length<5){
+
+let random=Math.floor(Math.random()*questionBank.length);
+
+if(!selectedQuestions.includes(questionBank[random])){
+selectedQuestions.push(questionBank[random]);
+}
+
+}
+
+loadQuestion();
+}
+
+function startTimer(){
+
+clearInterval(timer);
+
+timeLeft=10;
+
+document.getElementById("timer").innerHTML="⏱ Time: "+timeLeft;
+
+timer=setInterval(function(){
+
+timeLeft--;
+
+document.getElementById("timer").innerHTML="⏱ Time: "+timeLeft;
+
+if(timeLeft==0){
+
+clearInterval(timer);
+
+document.getElementById("feedback").innerHTML="⏰ Time Up!";
+nextQuestion();
+
+}
+
+},1000);
+
+}
+
+function loadQuestion(){
+
+let q=selectedQuestions[index];
+
+document.getElementById("question").innerHTML=q.q;
+
+for(let i=0;i<4;i++){
+document.getElementById("opt"+i).innerHTML=q.options[i];
+}
+
+document.getElementById("progress").innerHTML=
+"Question "+(index+1)+" / "+selectedQuestions.length;
+
+document.getElementById("feedback").innerHTML="";
+
+startTimer();
+}
+
+function check(option){
+
+clearInterval(timer);
+
+let q=selectedQuestions[index];
+
+if(option===q.answer){
+
+score++;
+document.getElementById("feedback").innerHTML="✅ Correct!";
+
+}else{
+
+document.getElementById("feedback").innerHTML=
+"❌ Wrong! Correct answer: "+q.options[q.answer];
+
+}
+
+document.getElementById("score").innerHTML="Score: "+score;
+
+setTimeout(nextQuestion,1200);
+
+}
+
+function nextQuestion(){
+
+index++;
+
+if(index<selectedQuestions.length){
+loadQuestion();
+}else{
+
+document.getElementById("question").innerHTML="🎉 Quiz Finished!";
+document.getElementById("feedback").innerHTML="Final Score: "+score;
+document.getElementById("timer").innerHTML="";
+document.getElementById("progress").innerHTML="";
+
+}
+
+}
+
+startGame();
+
+</script>
+
+</body>
+</html>
